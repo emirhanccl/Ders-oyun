@@ -1,4 +1,6 @@
 // ===== KAYITLI VERİLER =====
+let freeBreaks = Number(localStorage.getItem("freeBreaks"));
+if (isNaN(freeBreaks)) freeBreaks = 2;
 let xp = Number(localStorage.getItem("xp")) || 0;
 let level = Number(localStorage.getItem("level")) || 1;
 let totalStudy = Number(localStorage.getItem("totalStudy")) || 0;
@@ -18,6 +20,7 @@ function save() {
   localStorage.setItem("level", level);
   localStorage.setItem("totalStudy", totalStudy);
   localStorage.setItem("totalVideo", totalVideo);
+  localStorage.setItem("freeBreaks", freeBreaks);
 }
 
 // ===== LEVEL =====
@@ -113,9 +116,21 @@ let overtimeInt = null;
 
 function startBreak(min) {
   if (onBreak) return;
+
   onBreak = true;
   breakSeconds = min * 60;
   overtimeSeconds = 0;
+
+  // 👉 ÜCRETSİZ MOLA KONTROLÜ
+  if (freeBreaks > 0) {
+    freeBreaks--;
+  } else {
+    // ❌ ÜCRETSİZ BİTTİ → ANINDA CEZA
+    if (min === 10) addXP(-40);
+    if (min === 30) addXP(-80);
+  }
+
+  save();
   renderBreak();
 
   breakInt = setInterval(() => {
