@@ -229,11 +229,12 @@ function renderTasks() {
     ul.appendChild(li);
   });
 }
-function resetGame() {
-  localStorage.clear();
-  location.reload();
-}
+
 // ===== BAŞLAT =====
 renderTimer();
 renderTasks();
 updateUI();
+function resetGame() {
+  localStorage.clear();
+  location.reload();
+}
