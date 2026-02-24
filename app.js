@@ -19,10 +19,13 @@ let totalVideo = Number(localStorage.getItem("totalVideo")) || 0;
 // ===== UI =====
 function updateUI() {
   xp = Math.max(0, xp);
+
   document.getElementById("xp").innerText = xp;
   document.getElementById("level").innerText = level;
   document.getElementById("totalStudy").innerText = totalStudy.toFixed(2);
   document.getElementById("totalVideo").innerText = totalVideo.toFixed(2);
+
+  document.getElementById("dailyStudy").innerText = dailyStudy.toFixed(2);
 }
 
 function save() {
