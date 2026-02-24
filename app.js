@@ -1,3 +1,4 @@
+localStorage.clear();
 // ===== GÜNLÜK ÇALIŞMA RESET =====
 let dailyStudy = Number(localStorage.getItem("dailyStudy")) || 0;
 
