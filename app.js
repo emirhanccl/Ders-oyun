@@ -1,3 +1,13 @@
+// ===== GÜNLÜK ÇALIŞMA RESET =====
+let dailyStudy = Number(localStorage.getItem("dailyStudy")) || 0;
+
+const today = new Date().toISOString().slice(0, 10);
+let lastStudyDate = localStorage.getItem("lastStudyDate");
+
+if (lastStudyDate !== today) {
+  dailyStudy = 0;
+  localStorage.setItem("lastStudyDate", today);
+}
 // ===== KAYITLI VERİLER =====
 let freeBreaks = Number(localStorage.getItem("freeBreaks"));
 if (isNaN(freeBreaks)) freeBreaks = 2;
@@ -20,7 +30,11 @@ function save() {
   localStorage.setItem("level", level);
   localStorage.setItem("totalStudy", totalStudy);
   localStorage.setItem("totalVideo", totalVideo);
+
+  localStorage.setItem("dailyStudy", dailyStudy);
   localStorage.setItem("freeBreaks", freeBreaks);
+  localStorage.setItem("lastBreakDate", today);
+  localStorage.setItem("lastStudyDate", today);
 }
 
 // ===== LEVEL =====
@@ -41,34 +55,40 @@ function addXP(val) {
 // ===== DERS / VIDEO =====
 function study() {
   totalStudy += 1;
+  dailyStudy += 1;
   addXP(100);
 }
 
 function video1() {
   totalVideo += 1;
   totalStudy += 1;
+  dailyStudy += 1;
   addXP(80);
 }
 
 function video2() {
   totalVideo += 1.5;
   totalStudy += 1.5;
+  dailyStudy += 1.5;
   addXP(140);
 }
 
 // ===== TEST =====
 function test40() {
   totalStudy += 0.66;
+  dailyStudy += 0.66;
   addXP(100);
 }
 
 function test60() {
   totalStudy += 1;
+  dailyStudy += 1;
   addXP(120);
 }
 
 function test90() {
   totalStudy += 1.5;
+  dailyStudy += 1.5;
   addXP(160);
 }
 
