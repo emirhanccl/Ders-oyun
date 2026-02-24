@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>ders oyun</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>🎮 ders oyun</h1>
+
+<div class="card">
+  <p>XP: <span id="xp">0</span></p>
+  <p>Level: <span id="level">1</span></p>
+</div>
+
+<h2>📚 Ders / Video</h2>
+<div class="section">
+  <button onclick="study()">📚 1 Saat Ders (+100 XP)</button>
+  <button onclick="video1()">🎥 1 Saat Video (+80 XP)</button>
+  <button onclick="video2()">🎬 1.5 Saat Video (+140 XP)</button>
+</div>
+
+<h2>📝 Test</h2>
+<div class="section">
+  <button onclick="test40()">📝 40 dk Test (+100 XP)</button>
+  <button onclick="test60()">📝 1 Saat Test (+120 XP)</button>
+  <button onclick="test90()">📝 1.5 Saat Test (+160 XP)</button>
+</div>
+
+<h2>☕ Mola</h2>
+<div class="section">
+  <button onclick="startBreak(10)">☕ 10 dk Mola</button>
+  <button onclick="startBreak(30)">🛋️ 30 dk Mola</button>
+  <button onclick="endBreak()">▶️ Molayı Bitir</button>
+</div>
+
+<div class="card">
+  <p id="breakStatus">Mola yok</p>
+  <p id="overtimeStatus"></p>
+</div>
+
+<h2>🚬 Ceza</h2>
+<div class="section">
+  <button onclick="smoke()">🚬 Sigara (-20 XP)</button>
+</div>
+
+<h2>⏱️ Bağımsız Kronometre</h2>
+<p id="timer">00:00:00</p>
+<div class="section">
+  <button onclick="startTimer()">Başlat</button>
+  <button onclick="stopTimer()">Durdur</button>
+  <button onclick="resetTimer()">Sıfırla</button>
+</div>
+
+<h2>📊 İstatistik</h2>
+<div class="card">
+  <p>Toplam Ders: <span id="totalStudy">0</span> saat</p>
+  <p>Toplam Video: <span id="totalVideo">0</span> saat</p>
+</div>
+
+<h2>📝 Günlük Plan</h2>
+<input id="taskInput" placeholder="Görev yaz">
+<button onclick="addTask()">Ekle</button>
+<ul id="taskList"></ul>
+
+<script src="app.js"></script>
+</body>
+</html>
