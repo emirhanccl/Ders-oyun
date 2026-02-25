@@ -101,27 +101,46 @@ function smoke() {
   addXP(-20);
 }
 
-// ===== KRONOMETRE =====
-let sec = 0;
-let timerInt = null;
+// ===== AKILLI KRONOMETRE =====
+let timerStart = null;
+let timerRunning = false;
 
 function startTimer() {
-  if (timerInt) return;
-  timerInt = setInterval(() => {
-    sec++;
-    renderTimer();
-  }, 1000);
+  if (timerRunning) return;
+  timerRunning = true;
+  timerStart = Date.now() - (Number(localStorage.getItem("timerElapsed")) || 0);
+  localStorage.setItem("timerStart", timerStart);
+  localStorage.setItem("timerRunning", "1");
+  updateTimer();
 }
 
 function stopTimer() {
-  clearInterval(timerInt);
-  timerInt = null;
+  timerRunning = false;
+  localStorage.setItem("timerElapsed", Date.now() - timerStart);
+  localStorage.removeItem("timerRunning");
 }
 
 function resetTimer() {
-  stopTimer();
-  sec = 0;
-  renderTimer();
+  timerRunning = false;
+  timerStart = null;
+  localStorage.removeItem("timerStart");
+  localStorage.removeItem("timerElapsed");
+  localStorage.removeItem("timerRunning");
+  document.getElementById("timer").innerText = "00:00:00";
+}
+
+function updateTimer() {
+  if (!timerRunning) return;
+
+  const elapsed = Date.now() - timerStart;
+  const sec = Math.floor(elapsed / 1000);
+
+  const h = String(Math.floor(sec / 3600)).padStart(2, "0");
+  const m = String(Math.floor((sec % 3600) / 60)).padStart(2, "0");
+  const s = String(sec % 60).padStart(2, "0");
+
+  document.getElementById("timer").innerText = `${h}:${m}:${s}`;
+  requestAnimationFrame(updateTimer);
 }
 
 function renderTimer() {
@@ -131,28 +150,59 @@ function renderTimer() {
   document.getElementById("timer").innerText = `${h}:${m}:${s}`;
 }
 
-// ===== MOLA =====
+// ===== AKILLI MOLA (ARKA PLAN UYUMLU) =====
 let onBreak = false;
-let breakSeconds = 0;
-let breakInt = null;
-let overtimeSeconds = 0;
-let overtimeInt = null;
 
 function startBreak(min) {
   if (onBreak) return;
 
   onBreak = true;
-  breakSeconds = min * 60;
-  overtimeSeconds = 0;
+  const now = Date.now();
+  const breakEnd = now + min * 60 * 1000;
 
-  // 👉 ÜCRETSİZ MOLA KONTROLÜ
+  localStorage.setItem("breakEnd", breakEnd);
+  localStorage.removeItem("penaltiesPaid");
+
   if (freeBreaks > 0) {
     freeBreaks--;
   } else {
-    // ❌ ÜCRETSİZ BİTTİ → ANINDA CEZA
-    if (min === 10) addXP(-40);
-    if (min === 30) addXP(-80);
+    addXP(min === 10 ? -40 : -80);
   }
+
+  save();
+  renderBreak();
+}
+
+function renderBreak() {
+  if (!onBreak) return;
+
+  const now = Date.now();
+  const breakEnd = Number(localStorage.getItem("breakEnd"));
+  const diff = breakEnd - now;
+
+  if (diff > 0) {
+    const m = String(Math.floor(diff / 60000)).padStart(2, "0");
+    const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, "0");
+    document.getElementById("breakStatus").innerText =
+      `⏸️ Mola: ${m}:${s}`;
+  } else {
+    const overtimeMin = Math.floor(Math.abs(diff) / 60000);
+    const penalties = Math.floor(overtimeMin / 10);
+    const paid = Number(localStorage.getItem("penaltiesPaid")) || 0;
+
+    if (penalties > paid) {
+      addXP(-40 * (penalties - paid));
+      localStorage.setItem("penaltiesPaid", penalties);
+    }
+
+    document.getElementById("breakStatus").innerText =
+      "⚠️ Mola süresi doldu";
+    document.getElementById("overtimeStatus").innerText =
+      `⛔ Fazla mola: ${overtimeMin} dk (her 10 dk -40 XP)`;
+  }
+
+  requestAnimationFrame(renderBreak);
+}
 
   save();
   renderBreak();
@@ -239,3 +289,15 @@ function resetGame() {
   localStorage.clear();
   location.reload();
 }
+// ===== KRONOMETRE DEVAM =====
+if (localStorage.getItem("timerRunning")) {
+  timerRunning = true;
+  timerStart = Number(localStorage.getItem("timerStart"));
+  updateTimer();
+}
+// ===== MOLA DEVAM =====
+if (localStorage.getItem("breakEnd")) {
+  onBreak = true;
+  renderBreakSmart();
+}
+
